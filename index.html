@@ -383,11 +383,72 @@
 		/////////////// CANVAS FUNCTIONS /////////////////
 		//////////////////////////////////////////////////
 
+		function animateSwap(c, value0, i0, j0, value1, i1, j1)
+		{
+			// four different cases
+			// 1) s 0
+
+			// 2) s
+			//    0
+
+			// 3) 0 s
+
+			// 4) 0
+			//    s
+			var valueWithZero = (value0 == 0) ? 0 : (value1 == 0 ? 1 : -1);
+
+			if(valueWithZero < 0)	{
+				return;
+			}
+
+			var zeroSpot = (valueWithZero == 0) ? [i0, j0] : [i1, j1];
+			var otherSpot = (valueWithZero == 0) ? [i1, j1] : [i0, j0];
+
+
+			var startX = 0, startY = 0;
+
+			// find left and topmost coordinate
+			// 		either their i's or j's will be equal always
+			if(i0 == i1)	{
+				// case 2 or 4
+				// check valueWithZero to determine the topmost j coordinate
+				startX = i0;
+				startY = (valueWithZero == 0) ? j0 : j1;
+
+				endX = i0;
+				endY = (valueWithZero == 0) ? j1 : j0;
+
+			}	else if(j0 == j1)	{
+				// case 1 or 3
+				startX = (valueWithZero == 0) ? i0 : i1;
+				startY = j0;
+
+				endX = (valueWithZero == 0) ? i1 : i0;
+				endY = j0;
+
+			}	else 	{
+				// invalid swap
+				return;
+			}
+
+			var startSpot = [startX, startY];
+			var endSpot = [endX, endY];
+
+
+			c.fillStyle = "rgba(" + 100 * startSpot[0] + ", 22, 210, 5)";
+			c.fillRect(squareLength * startSpot[1] + 1, squareLength * startSpot[0] + 1, squareLength - 1 + (squareLength - 1) * (endSpot[1] - startSpot[1]) , squareLength - 1 + (squareLength - 1) * (endSpot[0] - startSpot[1]));
+
+		}
+
 		function drawSwap(c, value0, i0, j0, value1, i1, j1)
 		{
 			// cell (i0, j0) swaps with (i1, j1)
 			drawSquare(c, value0, i1, j1);
 			drawSquare(c, value1, i0, j0);
+
+
+			// animateSwap(c, value0, i0, j0, value1, i1, j1);
+
 		}
 
 
