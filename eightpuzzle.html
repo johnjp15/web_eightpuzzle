@@ -98,15 +98,43 @@
 				// step 3:
 				if(test(curr.state))	{
 					alert("GOOOOOOOAAAAALLLLLLLLLLL!");
-					finalState = curr.state;
+					alert("steps = " + steps);
+					alert("moves = " + moves);
+					finalState = copylist(curr.state);
 					finalNode = curr;
 					break;
 				}
 
 				// step 4:
 				var neighbors = getNeighborsOfState(curr.state);
+				// for(var i = 0; i < neighbors.length; i++)	{
+				// 	alert(neighbors[i])
+				// }
+
+				// step 5:
+				steps++;
+
+				// step 6:
+				for(var i = 0; i < neighbors.length; i++)	{
+					var nbr = neighbors[i];
+					var h = getHammingDistanceWithSteps(nbr, steps);
+
+					// Necessary optimization: don't enqueue if it's the same as the previous
+					if(nbr == curr.prevState)	{
+						console.log("nbr was the same as prevState, continuing...");
+						continue;
+					}
+
+					var nbrNode = new PuzzleNode(h, steps, curr.state, nbr, curr);
+					pq.queue(nbrNode);
+				}
 			}
 
+			// step 8:
+			if(finalState != [])	{
+				return finalNode;
+			}
+			return "unsolvable";
 		}
 
 		/////////////// HELPER FUNCTIONS /////////////////
@@ -126,7 +154,48 @@
 
 			// emptyIndex should now equal the array index location of 0 in state in interval [0, 8]
 
+			var inRow1 = (emptyIndex < 3);
+			var inRow3 = (emptyIndex > 5);
+			var inColumn1 = (emptyIndex % 3 == 0);
+			var inColumn3 = ((emptyIndex + 1) % 3 == 0);
 
+			// Case M(U)
+			if(!inRow1)	{
+				var caseMU = copylist(state);
+				var swapIndex = (inRow3) ? (emptyIndex - 3) : (emptyIndex + 3);
+				swap(caseMU, emptyIndex, swapIndex);
+				neighbors.push(caseMU);
+			}
+			// Case M(D)
+			if(!inRow3)	{
+				var caseMD = copylist(state);
+				var swapIndex = (inRow1) ? (emptyIndex + 3) : (emptyIndex - 3);
+				swap(caseMD, emptyIndex, swapIndex);
+				neighbors.push(caseMD);
+			}
+			// Case M(D)
+			if(!inColumn1)	{
+				var caseML = copylist(state);
+				var swapIndex = (inColumn3) ? (emptyIndex - 1) : (emptyIndex + 1);
+				swap(caseML, emptyIndex, swapIndex);
+				neighbors.push(caseML);
+			}
+			// Case M(D)
+			if(!inColumn3)	{
+				var caseMR = copylist(state);
+				var swapIndex = (inColumn1) ? (emptyIndex + 1) : (emptyIndex - 1);
+				swap(caseMR, emptyIndex, swapIndex);
+				neighbors.push(caseMR);
+			}
+
+			return neighbors;
+		}
+
+		function swap(array, i, j)
+		{
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
 		}
 
 		function getHammingDistanceWithSteps(state, steps)
@@ -176,6 +245,23 @@
 
 			return count;
 		}
+
+		function copylist(array)
+		{
+			return JSON.parse(JSON.stringify(array));
+		}
+
+		// function printGridFromState(state)
+		// {
+		// 	console.log("┌-------┐");
+		// 	for(var i = 0; i < state.length; i++)	{
+		// 		var value = (state[i] == 0) ? " " : state[i];
+		// 		if(parseInt(i % 3) == 0)	{
+		// 			console.log()
+		// 		}
+		// 	}
+		// }
+
 
 		//////////////////////////////////////////////////
 		/////////////// CANVAS FUNCTIONS /////////////////
