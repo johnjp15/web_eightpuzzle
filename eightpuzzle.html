@@ -21,7 +21,13 @@
 
 	</style>
 
+	<script src="priority-queue.js"></script>
+	<script src="PuzzleNode.js"></script>
+
 	<script type="text/javascript">
+
+		// https://github.com/adamhooper/js-priority-queue
+
 
 		/////////////// PUZZLE VARIABLES /////////////////
 		var goalState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
@@ -54,7 +60,121 @@
 
 		function solve(state)
 		{
+			var pq = new PriorityQueue({ comparator: function(a, b)	{ return a.priority - b.priority; }});
+			// alert("asdf");
+			var steps = 0;
+			var initialState = state;
 
+			var countInversions = inversionCount(initialState);
+
+			// alert("countInversions = " + countInversions);
+
+			console.log("\nNumber of inversions: " + countInversions);
+			if(countInversions % 2 == 1)	{
+				return "unsolvable";
+			}
+			// console.log("Asdf");
+
+			var finalState = [];
+			var prev = [];
+			hInitial = getHammingDistanceWithSteps(initialState, steps);
+
+			moves = 0;
+
+			initialNode = new PuzzleNode(hInitial, steps, prev, initialState, null);
+
+			// step 1:
+			pq.queue(initialNode);
+			// alert(steps)
+
+			while(pq.length > 0)
+			{
+				moves++;
+				// step 2:
+				var curr = pq.dequeue();
+				steps = curr.moves;
+				// alert(steps)
+
+				// step 3:
+				if(test(curr.state))	{
+					alert("GOOOOOOOAAAAALLLLLLLLLLL!");
+					finalState = curr.state;
+					finalNode = curr;
+					break;
+				}
+
+				// step 4:
+				var neighbors = getNeighborsOfState(curr.state);
+			}
+
+		}
+
+		/////////////// HELPER FUNCTIONS /////////////////
+
+		function getNeighborsOfState(state)
+		{
+			var neighbors = [];
+
+			// First find the location of the empty spot, O(n)
+			var emptyIndex = 0;
+			for(var i = 0; i < state.length; i++)	{
+				if(state[i] == 0)	{
+					emptyIndex = i;
+					break;
+				}
+			}
+
+			// emptyIndex should now equal the array index location of 0 in state in interval [0, 8]
+
+
+		}
+
+		function getHammingDistanceWithSteps(state, steps)
+		{
+			return steps + getHammingDistanceWithoutNumberOfSteps(state);
+		}
+
+		function getHammingDistanceWithoutNumberOfSteps(state)
+		{
+			var hammingDistance = 0;
+			for(var i = 0; i < state.length; i++)	{
+				if(goalState[i] == 0)	{
+					continue;
+				}
+				hammingDistance += ((state[i] != goalState[i]) ? 1 : 0);
+			}
+			return hammingDistance;
+		}
+
+
+		function getIndexDictionaryOfArray(array)
+		{
+			var dict = {};
+			for(var i = 0; i < array.length; i++)	{
+				dict[array[i]] = i;
+			}
+			return dict;
+		}
+
+		function inversionCount(array)
+		{
+			var count = 0;
+
+			var map = getIndexDictionaryOfArray(goalState);
+
+			for(var i = 0; i < array.length - 1; i++)	{
+				if(array[i] == 0)	{
+					continue;
+				}
+				for(var j = i + 1; j < array.length; j++)	{
+					if(array[j] == 0)	{
+						continue;
+					}
+					count += ((map[array[j]] < map[array[i]]) ? 1 : 0);
+				}
+			}
+
+			return count;
 		}
 
 		//////////////////////////////////////////////////
@@ -75,6 +195,12 @@
 			// alert("x = " + (squareLength * i) + ", y = " + (squareLength * j));
 			// alert(c)
 			// c.moveTo(0, 0);
+			if(value == 0)	{
+				c.fillStyle = "rgba(210, 210, 210, 5)";
+				c.fillRect(squareLength * j + 1, squareLength * i + 1, squareLength - 2, squareLength - 2);
+				return;
+			}
+			
 			c.fillStyle = "rgba(0, 132, 255, 70)";
 			c.fillRect(squareLength * j + 1, squareLength * i + 1, squareLength - 2, squareLength - 2);
 			
@@ -88,10 +214,7 @@
 			for(var i = 0; i < state.length; i++)	{
 				var row = parseInt(i / 3);
 				var col = parseInt(i % 3);
-				if(state[i] != 0)	{
-					drawSquare(c, state[i], row, col);
-					// drawSquare(c, 3, 0, 0);
-				}
+				drawSquare(c, state[i], row, col);
 			}
 		}
 
@@ -143,13 +266,16 @@
 		{
 			drawGridLines(c);
 
-			initialState = [1, 2, 3, 8, 0, 4, 7, 6, 5];
+			// initialState = [1, 2, 3, 8, 0, 4, 7, 6, 5];
+			initialState = [7, 1, 0, 3, 4, 6, 2, 5, 8];
 			// initialState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
 			// alert(test(initialState));
 			// drawSquare(c, 3, 0, 2);
 			// drawSquare(c, 0, 1, 1);
 			drawNumberSquares(c, initialState);
 			// drawSwap(c, 3, 0, 2, 4, 1, 2);
+
+			return initialState;
 		}
 
 		function initializeGlobalCanvasVars(canvas)
@@ -168,9 +294,9 @@
 
 			initializeGlobalCanvasVars(canvas);
 
-			initializePuzzle(c);
+			var startingState = initializePuzzle(c);
 
-
+			solve(startingState);
 		}
 	</script>
 
