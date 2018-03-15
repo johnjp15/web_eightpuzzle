@@ -1,0 +1,199 @@
+<html>
+<head>
+	<style type="text/css">
+		body	{
+			color: #EEE;
+			font-family: "Trebuchet MS";
+			margin: 20 20 20 20;
+		}
+
+		.container	{
+			padding: 10 10 10 10;
+			background-color: rgba(255, 255, 255, 0.3);
+			border: 1px solid;
+			border-radius: 10px;
+		}
+
+		#puzzle	{
+			/*border: 1px solid;*/
+			border-color; #FFFFFF;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+
+		/////////////// PUZZLE VARIABLES /////////////////
+		var goalState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+
+		/////////////// CANVAS VARIABLES /////////////////
+		var sideLength, firstLine, secondLine, squareLength;
+
+
+
+
+
+		//////////////////////////////////////////////////
+		/////////////// PUZZLE FUNCTIONS /////////////////
+		//////////////////////////////////////////////////
+		function generator()
+		{
+			// implement Fisher-Yates Shuffle
+
+		}
+
+		function test(state)
+		{
+			for(var i = 0; i < goalState.length; i++)	{
+				if(state[i] != goalState[i])	{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		function solve(state)
+		{
+
+		}
+
+		//////////////////////////////////////////////////
+		/////////////// CANVAS FUNCTIONS /////////////////
+		//////////////////////////////////////////////////
+
+		function drawSwap(c, value0, i0, j0, value1, i1, j1)
+		{
+			// cell (i0, j0) swaps with (i1, j1)
+			drawSquare(c, value0, i1, j1);
+			drawSquare(c, value1, i0, j0);
+		}
+
+
+		function drawSquare(c, value, i, j)
+		{
+			// alert("squareLength = " + squareLength + ", sideLength = " + sideLength)
+			// alert("x = " + (squareLength * i) + ", y = " + (squareLength * j));
+			// alert(c)
+			// c.moveTo(0, 0);
+			c.fillStyle = "rgba(0, 132, 255, 70)";
+			c.fillRect(squareLength * j + 1, squareLength * i + 1, squareLength - 2, squareLength - 2);
+			
+			c.font = "32px Consolas";
+			c.fillStyle = "rgba(0, 0, 0, 100)";
+			c.fillText(value, squareLength * j + (squareLength / 2) - 10, squareLength * i + (squareLength / 2) + 10);
+		}
+
+		function drawNumberSquares(c, state)
+		{
+			for(var i = 0; i < state.length; i++)	{
+				var row = parseInt(i / 3);
+				var col = parseInt(i % 3);
+				if(state[i] != 0)	{
+					drawSquare(c, state[i], row, col);
+					// drawSquare(c, 3, 0, 0);
+				}
+			}
+		}
+
+		function drawGridLines(c)
+		{
+			// // Vertical lines
+			// c.moveTo(100, 0);
+			// c.lineTo(100, 300);
+			// c.moveTo(200, 0);
+			// c.lineTo(200, 300);
+
+			// // Horizontal lines
+			// c.moveTo(0, 100);
+			// c.lineTo(300, 100);
+			// c.moveTo(0, 200);
+			// c.lineTo(300, 200);
+
+			// alert("squareLength = " + squareLength + ", sideLength = " + sideLength)
+
+			// 0, 1-99, 100, 101-199, 200, 201-299, 300
+
+
+			// Vertical lines
+			c.moveTo(0, 0);
+			c.lineTo(0, sideLength);
+			c.moveTo(squareLength, 0);
+			c.lineTo(squareLength, sideLength);
+			c.moveTo(squareLength * 2, 0);
+			c.lineTo(squareLength * 2, sideLength);
+			c.moveTo(sideLength, 0);
+			c.lineTo(sideLength, sideLength);
+
+			// Horizontal lines
+			c.moveTo(0, 0);
+			c.lineTo(sideLength, 0);
+			c.moveTo(0, squareLength);
+			c.lineTo(sideLength, squareLength);
+			c.moveTo(0, squareLength * 2);
+			c.lineTo(sideLength, squareLength * 2);
+			c.moveTo(0, sideLength);
+			c.lineTo(sideLength, sideLength);
+
+
+			// Draw
+			c.stroke();
+		}
+
+		function initializePuzzle(c)
+		{
+			drawGridLines(c);
+
+			initialState = [1, 2, 3, 8, 0, 4, 7, 6, 5];
+			// initialState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+			// alert(test(initialState));
+			// drawSquare(c, 3, 0, 2);
+			// drawSquare(c, 0, 1, 1);
+			drawNumberSquares(c, initialState);
+			// drawSwap(c, 3, 0, 2, 4, 1, 2);
+		}
+
+		function initializeGlobalCanvasVars(canvas)
+		{
+			sideLength = canvas.width;
+			firstLine = (sideLength / 3) + 1;
+			secondLine = firstLine + (sideLength / 3) + 1;
+			squareLength = sideLength / 3;
+		}
+
+		window.onload = function()
+		{
+			// alert('test');
+			var canvas = document.getElementById("puzzle");
+			var c = canvas.getContext("2d");
+
+			initializeGlobalCanvasVars(canvas);
+
+			initializePuzzle(c);
+
+
+		}
+	</script>
+
+</head>
+<body bgcolor="#2b455e">
+	
+	<div class="container">
+		<center>
+			<h2>8-Puzzle Solver</h2>
+		</center>
+	</div>
+	<div class="container">
+		<center>
+			<canvas id="puzzle" width="300" height="300">
+				
+			</canvas>
+		<center>
+	</div>
+</body>
+</html>
+
+<!-- 
+
+0, 1-99, 100, 101-199, 200, 201-299, 300
+
+ -->
