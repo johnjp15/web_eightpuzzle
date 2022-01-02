@@ -1,3 +1,3 @@
 # web_eightpuzzle
 
-http://www.johnjp.net/8puzzle/
+http://jjp.dev/8puzzle
