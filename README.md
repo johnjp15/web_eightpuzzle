@@ -1,3 +1,3 @@
 # web_eightpuzzle
 
-http://jjp.dev/8puzzle
+https://jjp.dev/8puzzle
